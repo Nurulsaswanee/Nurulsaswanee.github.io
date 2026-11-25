@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Candy Crush Game</title>
+  <!-- <link rel="icon" type="image/x-icon" href="bmi.png"> -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='r' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ff007f'/%3E%3Cstop offset='50%25' stop-color='%237928ca'/%3E%3Cstop offset='100%25' stop-color='%2300dfd8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='%230b0f19'/%3E%3Crect x='60' y='60' width='100' height='100' rx='25' fill='%23ef4444'/%3E%3Crect x='352' y='60' width='100' height='100' rx='25' fill='%23eab308'/%3E%3Crect x='60' y='352' width='100' height='100' rx='25' fill='%2310b981'/%3E%3Crect x='352' y='352' width='100' height='100' rx='25' fill='%23a855f7'/%3E%3Crect x='166' y='166' width='180' height='180' rx='45' fill='url(%23r)' stroke='%23ffffff' stroke-width='6'/%3E%3Ccircle cx='256' cy='256' r='32' fill='none' stroke='%23ffffff' stroke-width='8'/%3E%3C/svg%3E">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #0b0f19;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    /* Board Container Styling */
+    .game-board-container {
+      background: radial-gradient(130% 130% at 50% 10%, #1a2236 0%, #0d121d 100%);
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .tile-slot {
+      background-color: rgba(15, 23, 42, 0.55);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    /* Candy Tile Visuals - Soft Clay/Neumorphic Style */
+    .candy {
+      position: absolute;
+      inset: 2px;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+      z-index: 10;
+    }
+
+    .candy:hover {
+      filter: brightness(1.08);
+    }
+
+    .candy.selected {
+      transform: scale(0.92);
+      box-shadow: 0 0 0 3px #ffffff, 0 0 20px rgba(255, 255, 255, 0.8) !important;
+      z-index: 20;
+    }
+
+    /* Candy Color Themes with 3D Depth */
+    .candy-red {
+      background: linear-gradient(145deg, #f87171, #dc2626);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -3px 5px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(220, 38, 38, 0.35);
+    }
+    .candy-purple {
+      background: linear-gradient(145deg, #c084fc, #9333ea);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -3px 5px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(147, 51, 234, 0.35);
+    }
+    .candy-blue {
+      background: linear-gradient(145deg, #38bdf8, #0284c7);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -3px 5px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(2, 132, 199, 0.35);
+    }
+    .candy-green {
+      background: linear-gradient(145deg, #34d399, #059669);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -3px 5px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(5, 150, 105, 0.35);
+    }
+    .candy-yellow {
+      background: linear-gradient(145deg, #fde047, #d97706);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.45), inset 0 -3px 5px rgba(0, 0, 0, 0.25), 0 4px 10px rgba(217, 119, 6, 0.35);
+    }
+    .candy-teal {
+      background: linear-gradient(145deg, #f05cb5, #e090c0);
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4), inset 0 -3px 5px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(13, 148, 136, 0.35);
+    }
+
+    /* Special Candy Items */
+    .candy-bomb {
+      background: radial-gradient(circle at 35% 35%, #475569, #0f172a) !important;
+      box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.6), 0 0 16px rgba(245, 158, 11, 0.7) !important;
+      animation: pulse-glow 1.5s infinite alternate;
+    }
+
+    .candy-rainbow {
+      background: linear-gradient(135deg, #ff007f, #7928ca, #0070f3, #00dfd8) !important;
+      background-size: 200% 200%;
+      box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.8), 0 0 18px rgba(236, 72, 153, 0.8) !important;
+      animation: rainbow-shift 2.5s ease infinite alternate;
+    }
+
+    @keyframes rainbow-shift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    @keyframes pulse-glow {
+      0% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(251, 146, 60, 0.5)); }
+      100% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(251, 146, 60, 0.9)); }
+    }
+
+    /* Pop Elimination Animation */
+    .popping {
+      animation: popOut 0.25s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popOut {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.9; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    /* Drop Animation */
+    .falling {
+      animation: dropIn 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+    }
+
+    @keyframes dropIn {
+      0% { transform: translateY(-30px) scale(0.8); opacity: 0.5; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* Floating Combo Text */
+    .combo-badge {
+      position: absolute;
+      pointer-events: none;
+      font-weight: 800;
+      color: #facc15;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8), 0 0 15px rgba(250, 204, 21, 0.6);
+      animation: floatUp 0.8s ease-out forwards;
+      z-index: 50;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 0; transform: translateY(0) scale(0.6); }
+      30% { opacity: 1; transform: translateY(-15px) scale(1.2); }
+      100% { opacity: 0; transform: translateY(-40px) scale(1); }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col items-center justify-between p-3 sm:p-6 overflow-x-hidden">
+
+  <main class="w-full max-w-lg flex flex-col items-center">
+    <!-- Header title -->
+    <div class="w-full flex items-center justify-between mb-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center gap-2">
+          <span>Jeweled</span>
+          <span class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold">Match 3</span>
+        </h1>
+        <p class="text-xs text-slate-400">ลากหรือแตะสลับลูกอมสีเดียวกันเรียงต่อกัน 3 ชิ้นขึ้นไป</p>
+      </div>
+
+      <button id="soundToggleBtn" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition shadow flex items-center justify-center cursor-pointer" title="เปิด/ปิดเสียง">
+        <svg id="soundIconOn" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+        </svg>
+        <svg id="soundIconOff" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 hidden text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="w-full flex items-center justify-between gap-2.5 bg-slate-900/90 backdrop-blur-md p-2.5 rounded-2xl border border-slate-800 shadow-xl mb-4">
+      <div class="flex-1 bg-slate-800/80 px-3 py-2 rounded-xl border border-slate-700/50 flex flex-col items-center">
+        <span class="text-[11px] font-medium text-slate-400">คะแนน (Score)</span>
+        <span id="scoreText" class="text-xl sm:text-2xl font-extrabold text-amber-400 tabular-nums">0</span>
+      </div>
+
+      <div class="flex-1 bg-slate-800/80 px-3 py-2 rounded-xl border border-slate-700/50 flex flex-col items-center">
+        <span class="text-[11px] font-medium text-slate-400">จำนวนครั้ง (Moves)</span>
+        <span id="movesText" class="text-xl sm:text-2xl font-extrabold text-sky-400 tabular-nums">25</span>
+      </div>
+
+      <button id="restartBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-medium text-sm sm:text-base py-2.5 px-3 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span>เริ่มใหม่</span>
+      </button>
+    </div>
+
+    <!-- Game Board -->
+    <div class="relative w-full aspect-square max-w-[440px] game-board-container p-2.5 sm:p-3 rounded-3xl overflow-hidden">
+      <div id="gridBoard" class="w-full h-full grid grid-cols-8 grid-rows-8 gap-1 sm:gap-1.5 relative select-none">
+        <!-- 64 slots generated dynamically -->
+      </div>
+
+      <!-- Combo & Announcement Overlay -->
+      <div id="effectLayer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+
+      <!-- Game Over Modal Overlay -->
+      <div id="gameOverModal" class="absolute inset-0 bg-slate-950/85 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center p-6 text-center transition-all duration-300 opacity-0 pointer-events-none z-50">
+        <div class="w-16 h-16 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center mb-3 text-3xl shadow-inner border border-amber-500/30">
+          🏆
+        </div>
+        <h2 class="text-2xl font-black text-white mb-1 tracking-wide">เกมสิ้นสุด! (Game Over)</h2>
+        <p class="text-slate-400 text-sm mb-4">จำนวนครั้งในการเคลื่อนย้ายหมดลงแล้ว</p>
+
+        <div class="w-full max-w-xs bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 mb-5 flex flex-col gap-1">
+          <div class="flex justify-between items-center text-sm text-slate-400">
+            <span>คะแนนทั้งหมด</span>
+            <span id="finalScore" class="text-xl font-bold text-amber-400">0</span>
+          </div>
+          <div class="flex justify-between items-center text-xs text-slate-500 border-t border-slate-800 pt-2">
+            <span>การจับคู่สูงสุด</span>
+            <span id="highestCombo" class="font-semibold text-slate-300">0 คอมโบ</span>
+          </div>
+        </div>
+
+        <button id="playAgainBtn" class="w-full max-w-xs bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 active:scale-95 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-indigo-500/25 transition cursor-pointer">
+          เล่นใหม่อีกครั้ง
+        </button>
+      </div>
+    </div>
+
+    <!-- Instructions / Legend -->
+    <div class="w-full max-w-md mt-4 text-center">
+      <div class="flex items-center justify-center gap-4 text-xs text-slate-400">
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-600 border border-amber-400"></span> เรียง 4: ลูกอมระเบิด 💥</span>
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-pink-500 to-indigo-500"></span> เรียง 5+: ลูกอมสายรุ้ง 🌈</span>
+      </div>
+    </div>
+  </main>
+
+ <footer class="w-full max-w-4xl mt-8 mb-2 px-4 py-3 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-800 text-center shadow-lg text-xs sm:text-sm text-slate-300 whitespace-nowrap overflow-x-auto">
+    6720310105 นางสาวนูรซีฮาม เวาะมะ | 6720310107 นางสาวนูรูลซัซวานี เด็นอะสัน | 6720310125 นางสาวอะห์ลาม อับดุลมาแน
+  </footer>
+
+  <script>
+    // Web Audio Synthesizer for responsive audio effects
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type = 'sine', duration = 0.15, vol = 0.2) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+          gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      playSelect() {
+        this.playTone(520, 'sine', 0.08, 0.15);
+      }
+
+      playSwap() {
+        this.playTone(320, 'triangle', 0.1, 0.2);
+      }
+
+      playMatch(combo = 1) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const baseFrequencies = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; // C, E, G, C5, E5, G5
+        const root = baseFrequencies[Math.min(combo - 1, baseFrequencies.length - 1)];
+
+        const notes = [root, root * 1.25, root * 1.5];
+        notes.forEach((freq, idx) => {
+          setTimeout(() => {
+            this.playTone(freq, 'sine', 0.18, 0.22);
+          }, idx * 60);
+        });
+      }
+
+      playBomb() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.35);
+
+          gain.gain.setValueAtTime(0.4, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.35);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.35);
+        } catch (e) {}
+      }
+
+      playGameOver() {
+        if (!this.enabled) return;
+        this.init();
+        const tones = [440, 392, 349, 293];
+        tones.forEach((freq, idx) => {
+          setTimeout(() => {
+            this.playTone(freq, 'triangle', 0.3, 0.25);
+          }, idx * 160);
+        });
+      }
+    }
+
+    const audio = new SoundEngine();
+
+    const BOARD_SIZE = 8;
+    const CANDY_TYPES = [
+      { id: 0, name: 'red', class: 'candy-red' },
+      { id: 1, name: 'purple', class: 'candy-purple' },
+      { id: 2, name: 'blue', class: 'candy-blue' },
+      { id: 3, name: 'green', class: 'candy-green' },
+      { id: 4, name: 'yellow', class: 'candy-yellow' },
+      { id: 5, name: 'teal', class: 'candy-teal' }
+    ];
+
+    const SPECIAL_NONE = 0;
+    const SPECIAL_BOMB = 1;     // 4 in a row: explodes 3x3
+    const SPECIAL_RAINBOW = 2;  // 5 in a row: clears all candies of target color
+
+    // Game State
+    let board = [];
+    let score = 0;
+    let moves = 25;
+    let selectedTile = null;
+    let isProcessing = false;
+    let maxComboStreak = 0;
+    let currentCombo = 0;
+
+    // DOM Elements
+    const gridBoardEl = document.getElementById('gridBoard');
+    const effectLayerEl = document.getElementById('effectLayer');
+    const scoreTextEl = document.getElementById('scoreText');
+    const movesTextEl = document.getElementById('movesText');
+    const restartBtnEl = document.getElementById('restartBtn');
+    const gameOverModalEl = document.getElementById('gameOverModal');
+    const finalScoreEl = document.getElementById('finalScore');
+    const highestComboEl = document.getElementById('highestCombo');
+    const playAgainBtnEl = document.getElementById('playAgainBtn');
+    const soundToggleBtnEl = document.getElementById('soundToggleBtn');
+    const soundIconOnEl = document.getElementById('soundIconOn');
+    const soundIconOffEl = document.getElementById('soundIconOff');
+
+    function createEmptyBoard() {
+      const b = [];
+      for (let r = 0; r < BOARD_SIZE; r++) {
+        b[r] = [];
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          b[r][c] = null;
+        }
+      }
+      return b;
+    }
+
+    function getRandomCandyType(row, col, currentBoard) {
+      const possible = [];
+      for (let t = 0; t < CANDY_TYPES.length; t++) {
+        // Prevent pre-existing matches of 3 during board generation
+        const horizontalMatch = col >= 2 &&
+          currentBoard[row][col - 1] && currentBoard[row][col - 2] &&
+          currentBoard[row][col - 1].type === t && currentBoard[row][col - 2].type === t;
+
+        const verticalMatch = row >= 2 &&
+          currentBoard[row - 1][col] && currentBoard[row - 2][col] &&
+          currentBoard[row - 1][col].type === t && currentBoard[row - 2][col].type === t;
+
+        if (!horizontalMatch && !verticalMatch) {
+          possible.push(t);
+        }
+      }
+      const chosen = possible[Math.floor(Math.random() * possible.length)];
+      return {
+        type: chosen,
+        special: SPECIAL_NONE,
+        id: Math.random().toString(36).substring(2, 9)
+      };
+    }
+
+    function initBoard() {
+      board = createEmptyBoard();
+      for (let r = 0; r < BOARD_SIZE; r++) {
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          board[r][c] = getRandomCandyType(r, c, board);
+        }
+      }
+    }
+
+    function renderBoard() {
+      gridBoardEl.innerHTML = '';
+      for (let r = 0; r < BOARD_SIZE; r++) {
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          const slot = document.createElement('div');
+          slot.className = 'tile-slot';
+          slot.dataset.row = r;
+          slot.dataset.col = c;
+
+          const candyData = board[r][c];
+          if (candyData) {
+            const candyEl = createCandyElement(candyData, r, c);
+            slot.appendChild(candyEl);
+          }
+          gridBoardEl.appendChild(slot);
+        }
+      }
+    }
+
+    function createCandyElement(candyData, r, c) {
+      const candyEl = document.createElement('div');
+      const candyMeta = CANDY_TYPES[candyData.type];
+      candyEl.className = `candy ${candyMeta.class}`;
+      candyEl.dataset.row = r;
+      candyEl.dataset.col = c;
+      candyEl.dataset.id = candyData.id;
+
+      // Special decoration
+      if (candyData.special === SPECIAL_BOMB) {
+        candyEl.classList.add('candy-bomb');
+        candyEl.innerHTML = `
+          <svg class="w-6 h-6 text-amber-300 drop-shadow" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+          </svg>`;
+      } else if (candyData.special === SPECIAL_RAINBOW) {
+        candyEl.classList.add('candy-rainbow');
+        candyEl.innerHTML = `
+          <div class="w-4 h-4 rounded-full border-2 border-white/80 shadow-md"></div>
+        `;
+      } else {
+        const highlight = document.createElement('div');
+        highlight.className = 'w-3 h-3 rounded-full bg-white/30 self-start ml-2 mt-2 blur-[0.5px] pointer-events-none';
+        candyEl.appendChild(highlight);
+      }
+
+      if (selectedTile && selectedTile.row === r && selectedTile.col === c) {
+        candyEl.classList.add('selected');
+      }
+
+      return candyEl;
+    }
+
+    function findMatches(b) {
+      const matchedMap = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(false));
+      const matchGroups = [];
+
+      // Check Horizontal matches
+      for (let r = 0; r < BOARD_SIZE; r++) {
+        let matchLength = 1;
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          const current = b[r][c];
+          const next = c < BOARD_SIZE - 1 ? b[r][c + 1] : null;
+
+          if (current && next && current.type === next.type) {
+            matchLength++;
+          } else {
+            if (matchLength >= 3) {
+              const group = [];
+              for (let k = 0; k < matchLength; k++) {
+                const colIdx = c - k;
+                matchedMap[r][colIdx] = true;
+                group.push({ row: r, col: colIdx });
+              }
+              matchGroups.push({ tiles: group, length: matchLength, dir: 'h' });
+            }
+            matchLength = 1;
+          }
+        }
+      }
+
+      // Check Vertical matches
+      for (let c = 0; c < BOARD_SIZE; c++) {
+        let matchLength = 1;
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          const current = b[r][c];
+          const next = r < BOARD_SIZE - 1 ? b[r + 1][c] : null;
+
+          if (current && next && current.type === next.type) {
+            matchLength++;
+          } else {
+            if (matchLength >= 3) {
+              const group = [];
+              for (let k = 0; k < matchLength; k++) {
+                const rowIdx = r - k;
+                matchedMap[rowIdx][c] = true;
+                group.push({ row: rowIdx, col: c });
+              }
+              matchGroups.push({ tiles: group, length: matchLength, dir: 'v' });
+            }
+            matchLength = 1;
+          }
+        }
+      }
+
+      return { matchedMap, matchGroups };
+    }
+
+    function areAdjacent(pos1, pos2) {
+      const dr = Math.abs(pos1.row - pos2.row);
+      const dc = Math.abs(pos1.col - pos2.col);
+      return (dr === 1 && dc === 0) || (dr === 0 && dc === 1);
+    }
+
+    async function attemptSwap(posA, posB) {
+      isProcessing = true;
+      audio.playSwap();
+
+      // Animate Swap
+      await animateSwapDom(posA, posB);
+
+      // Perform swap in data
+      const temp = board[posA.row][posA.col];
+      board[posA.row][posA.col] = board[posB.row][posB.col];
+      board[posB.row][posB.col] = temp;
+
+      // Check for special candies activation (e.g. Rainbow Candy)
+      const specialActivated = checkSpecialSwaps(posA, posB);
+      const { matchGroups } = findMatches(board);
+
+      if (matchGroups.length > 0 || specialActivated) {
+        moves--;
+        updateStats();
+        currentCombo = 0;
+        await resolveMatchesAndCascade(matchGroups);
+      } else {
+        // Invalid swap! Swap back
+        audio.playTone(180, 'sawtooth', 0.15, 0.15);
+        await animateSwapDom(posA, posB);
+        const revert = board[posA.row][posA.col];
+        board[posA.row][posA.col] = board[posB.row][posB.col];
+        board[posB.row][posB.col] = revert;
+        renderBoard();
+      }
+
+      isProcessing = false;
+
+      if (moves <= 0) {
+        triggerGameOver();
+      }
+    }
+
+    function checkSpecialSwaps(posA, posB) {
+      const tileA = board[posA.row][posA.col];
+      const tileB = board[posB.row][posB.col];
+
+      if (tileA.special === SPECIAL_RAINBOW || tileB.special === SPECIAL_RAINBOW) {
+        const targetType = tileA.special === SPECIAL_RAINBOW ? tileB.type : tileA.type;
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          for (let c = 0; c < BOARD_SIZE; c++) {
+            if (board[r][c] && board[r][c].type === targetType) {
+              board[r][c]._forceClear = true;
+            }
+          }
+        }
+        if (tileA.special === SPECIAL_RAINBOW) tileA._forceClear = true;
+        if (tileB.special === SPECIAL_RAINBOW) tileB._forceClear = true;
+        return true;
+      }
+      return false;
+    }
+
+    function animateSwapDom(posA, posB) {
+      return new Promise(resolve => {
+        const slotA = gridBoardEl.children[posA.row * BOARD_SIZE + posA.col];
+        const slotB = gridBoardEl.children[posB.row * BOARD_SIZE + posB.col];
+        const candyA = slotA.querySelector('.candy');
+        const candyB = slotB.querySelector('.candy');
+
+        if (!candyA || !candyB) {
+          resolve();
+          return;
+        }
+
+        const deltaX = (posB.col - posA.col) * (slotA.clientWidth + 4);
+        const deltaY = (posB.row - posA.row) * (slotA.clientHeight + 4);
+
+        candyA.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        candyB.style.transform = `translate(${-deltaX}px, ${-deltaY}px)`;
+
+        setTimeout(() => {
+          candyA.style.transform = '';
+          candyB.style.transform = '';
+          renderBoard();
+          resolve();
+        }, 220);
+      });
+    }
+
+    async function resolveMatchesAndCascade(initialGroups) {
+      let activeGroups = initialGroups;
+
+      while (true) {
+        const clearMap = Array.from({ length: BOARD_SIZE }, () => Array(BOARD_SIZE).fill(false));
+        const newSpecialCandies = [];
+
+        // Check forced clears (from Rainbow)
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          for (let c = 0; c < BOARD_SIZE; c++) {
+            if (board[r][c] && board[r][c]._forceClear) {
+              clearMap[r][c] = true;
+            }
+          }
+        }
+
+        // Check regular match groups & generate specials
+        if (activeGroups && activeGroups.length > 0) {
+          activeGroups.forEach(group => {
+            group.tiles.forEach(pos => {
+              clearMap[pos.row][pos.col] = true;
+            });
+
+            // 5 in a row -> Rainbow Candy
+            if (group.length >= 5) {
+              const spawnTile = group.tiles[Math.floor(group.tiles.length / 2)];
+              newSpecialCandies.push({
+                row: spawnTile.row,
+                col: spawnTile.col,
+                candy: {
+                  type: board[spawnTile.row][spawnTile.col].type,
+                  special: SPECIAL_RAINBOW,
+                  id: Math.random().toString(36).substring(2, 9)
+                }
+              });
+            }
+            // 4 in a row -> Bomb Candy
+            else if (group.length === 4) {
+              const spawnTile = group.tiles[1];
+              newSpecialCandies.push({
+                row: spawnTile.row,
+                col: spawnTile.col,
+                candy: {
+                  type: board[spawnTile.row][spawnTile.col].type,
+                  special: SPECIAL_BOMB,
+                  id: Math.random().toString(36).substring(2, 9)
+                }
+              });
+            }
+          });
+        }
+
+        // Trigger existing bomb explosions
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          for (let c = 0; c < BOARD_SIZE; c++) {
+            if (clearMap[r][c] && board[r][c] && board[r][c].special === SPECIAL_BOMB) {
+              audio.playBomb();
+              for (let dr = -1; dr <= 1; dr++) {
+                for (let dc = -1; dc <= 1; dc++) {
+                  const nr = r + dr;
+                  const nc = c + dc;
+                  if (nr >= 0 && nr < BOARD_SIZE && nc >= 0 && nc < BOARD_SIZE) {
+                    clearMap[nr][nc] = true;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        let destroyedCount = 0;
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          for (let c = 0; c < BOARD_SIZE; c++) {
+            if (clearMap[r][c] && board[r][c]) {
+              destroyedCount++;
+            }
+          }
+        }
+
+        if (destroyedCount === 0) break;
+
+        currentCombo++;
+        if (currentCombo > maxComboStreak) {
+          maxComboStreak = currentCombo;
+        }
+
+        const baseScore = destroyedCount * 10;
+        const comboBonus = Math.floor(baseScore * (currentCombo - 1) * 0.5);
+        score += baseScore + comboBonus;
+        updateStats();
+
+        audio.playMatch(currentCombo);
+        showComboToast(currentCombo);
+
+        await animateClear(clearMap);
+
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          for (let c = 0; c < BOARD_SIZE; c++) {
+            if (clearMap[r][c]) {
+              board[r][c] = null;
+            }
+          }
+        }
+
+        newSpecialCandies.forEach(sp => {
+          board[sp.row][sp.col] = sp.candy;
+        });
+
+        await dropAndRefillCandies();
+
+        const nextMatches = findMatches(board);
+        activeGroups = nextMatches.matchGroups;
+      }
+    }
+
+    function animateClear(clearMap) {
+      return new Promise(resolve => {
+        for (let r = 0; r < BOARD_SIZE; r++) {
+          for (let c = 0; c < BOARD_SIZE; c++) {
+            if (clearMap[r][c]) {
+              const slot = gridBoardEl.children[r * BOARD_SIZE + c];
+              const candy = slot.querySelector('.candy');
+              if (candy) {
+                candy.classList.add('popping');
+              }
+            }
+          }
+        }
+        setTimeout(resolve, 250);
+      });
+    }
+
+    function showComboToast(combo) {
+      if (combo <= 1) return;
+      const badge = document.createElement('div');
+      badge.className = 'combo-badge text-xl font-black';
+      badge.style.left = '50%';
+      badge.style.top = '45%';
+      badge.style.transform = 'translate(-50%, -50%)';
+      badge.textContent = `${combo}x คอมโบ! 🎉`;
+      effectLayerEl.appendChild(badge);
+      setTimeout(() => badge.remove(), 800);
+    }
+
+    function dropAndRefillCandies() {
+      return new Promise(resolve => {
+        for (let c = 0; c < BOARD_SIZE; c++) {
+          let emptyRow = BOARD_SIZE - 1;
+          for (let r = BOARD_SIZE - 1; r >= 0; r--) {
+            if (board[r][c] !== null) {
+              if (emptyRow !== r) {
+                board[emptyRow][c] = board[r][c];
+                board[r][c] = null;
+              }
+              emptyRow--;
+            }
+          }
+
+          for (let r = emptyRow; r >= 0; r--) {
+            board[r][c] = {
+              type: Math.floor(Math.random() * CANDY_TYPES.length),
+              special: SPECIAL_NONE,
+              id: Math.random().toString(36).substring(2, 9)
+            };
+          }
+        }
+
+        renderBoard();
+
+        const candies = gridBoardEl.querySelectorAll('.candy');
+        candies.forEach(el => el.classList.add('falling'));
+
+        setTimeout(() => {
+          candies.forEach(el => el.classList.remove('falling'));
+          resolve();
+        }, 280);
+      });
+    }
+
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let pointerActiveTile = null;
+    let isDragging = false;
+    let draggedElement = null;
+    const SWIPE_THRESHOLD = 26;
+
+    function setupDragAndTouchControls() {
+      gridBoardEl.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      gridBoardEl.addEventListener('pointerdown', (e) => {
+        if (isProcessing || moves <= 0) return;
+
+        const slot = e.target.closest('.tile-slot');
+        if (!slot) return;
+
+        const r = parseInt(slot.dataset.row);
+        const c = parseInt(slot.dataset.col);
+
+        pointerStartX = e.clientX;
+        pointerStartY = e.clientY;
+        pointerActiveTile = { row: r, col: c };
+        isDragging = false;
+        draggedElement = slot.querySelector('.candy');
+
+        if (draggedElement) {
+          draggedElement.setPointerCapture(e.pointerId);
+        }
+      });
+
+      gridBoardEl.addEventListener('pointermove', (e) => {
+        if (!pointerActiveTile || isProcessing || !draggedElement) return;
+
+        const diffX = e.clientX - pointerStartX;
+        const diffY = e.clientY - pointerStartY;
+        const distance = Math.hypot(diffX, diffY);
+
+        if (distance > 6) {
+          isDragging = true;
+          const clampedX = Math.max(-18, Math.min(18, diffX * 0.45));
+          const clampedY = Math.max(-18, Math.min(18, diffY * 0.45));
+          draggedElement.style.transform = `translate(${clampedX}px, ${clampedY}px) scale(1.05)`;
+          draggedElement.style.zIndex = '30';
+        }
+
+        if (distance >= SWIPE_THRESHOLD) {
+          let targetR = pointerActiveTile.row;
+          let targetC = pointerActiveTile.col;
+
+          if (Math.abs(diffX) > Math.abs(diffY)) {
+            targetC += diffX > 0 ? 1 : -1;
+          } else {
+            targetR += diffY > 0 ? 1 : -1;
+          }
+
+          resetDragVisuals();
+
+          if (targetR >= 0 && targetR < BOARD_SIZE && targetC >= 0 && targetC < BOARD_SIZE) {
+            const originTile = { ...pointerActiveTile };
+            pointerActiveTile = null;
+            selectedTile = null;
+            attemptSwap(originTile, { row: targetR, col: targetC });
+          } else {
+            pointerActiveTile = null;
+          }
+        }
+      });
+
+      const handlePointerEnd = (e) => {
+        if (!pointerActiveTile) {
+          resetDragVisuals();
+          return;
+        }
+
+        const tile = { ...pointerActiveTile };
+        const wasDragGesture = isDragging;
+
+        resetDragVisuals();
+        pointerActiveTile = null;
+        isDragging = false;
+
+        if (!wasDragGesture) {
+          handleTileTap(tile.row, tile.col);
+        }
+      };
+
+      gridBoardEl.addEventListener('pointerup', handlePointerEnd);
+      gridBoardEl.addEventListener('pointercancel', handlePointerEnd);
+    }
+
+    function resetDragVisuals() {
+      if (draggedElement) {
+        draggedElement.style.transform = '';
+        draggedElement.style.zIndex = '';
+        draggedElement = null;
+      }
+    }
+
+    // Tap-to-Swap logic
+    function handleTileTap(r, c) {
+      if (isProcessing || moves <= 0) return;
+      audio.init();
+
+      if (!selectedTile) {
+        selectedTile = { row: r, col: c };
+        audio.playSelect();
+        renderBoard();
+        return;
+      }
+
+      if (selectedTile.row === r && selectedTile.col === c) {
+        selectedTile = null;
+        renderBoard();
+        return;
+      }
+
+      if (areAdjacent(selectedTile, { row: r, col: c })) {
+        const fromTile = { ...selectedTile };
+        const toTile = { row: r, col: c };
+        selectedTile = null;
+        renderBoard();
+        attemptSwap(fromTile, toTile);
+      } else {
+        selectedTile = { row: r, col: c };
+        audio.playSelect();
+        renderBoard();
+      }
+    }
+
+    function updateStats() {
+      scoreTextEl.textContent = score.toLocaleString();
+      movesTextEl.textContent = moves;
+    }
+
+    function triggerGameOver() {
+      audio.playGameOver();
+      finalScoreEl.textContent = score.toLocaleString();
+      highestComboEl.textContent = `${maxComboStreak} คอมโบ`;
+      gameOverModalEl.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function resetGame() {
+      score = 0;
+      moves = 25;
+      maxComboStreak = 0;
+      currentCombo = 0;
+      selectedTile = null;
+      isProcessing = false;
+      gameOverModalEl.classList.add('opacity-0', 'pointer-events-none');
+      updateStats();
+      initBoard();
+      renderBoard();
+    }
+
+    // Event Listeners
+    restartBtnEl.addEventListener('click', () => {
+      audio.init();
+      resetGame();
+    });
+
+    playAgainBtnEl.addEventListener('click', () => {
+      audio.init();
+      resetGame();
+    });
+
+    soundToggleBtnEl.addEventListener('click', () => {
+      audio.enabled = !audio.enabled;
+      if (audio.enabled) {
+        audio.init();
+        audio.playSelect();
+        soundIconOnEl.classList.remove('hidden');
+        soundIconOffEl.classList.add('hidden');
+      } else {
+        soundIconOnEl.classList.add('hidden');
+        soundIconOffEl.classList.remove('hidden');
+      }
+    });
+
+    // Start on load
+    window.onload = () => {
+      setupDragAndTouchControls();
+      resetGame();
+    };
+  </script>
+</body>
+</html>

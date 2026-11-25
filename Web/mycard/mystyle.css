@@ -1,0 +1,212 @@
+body {
+    font-family: 'Kanit', 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #ffffff 0%, #ffccff 100%)
+}
+
+.main-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 20px;
+}
+
+/* ด้านหน้าของการ์ด */
+.front-card {
+    width: 400px;
+    height: 250px;
+    border-radius: 15px;
+    background: #003366;
+    color: white;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    position: relative;
+    /* box-sizing: border-box; */
+}
+
+.u-logo img {
+    width: 10%;
+    height: auto;
+    position: absolute;
+    top: 5px;
+    left: 6px;
+}
+
+.text-one {
+    position: absolute;
+    top: 20px;
+    left: 55px;
+    line-height: 0.6;
+}
+
+.text-two {
+    position: absolute;
+    text-align: right;
+    line-height: 0.8;
+    right: 15px;
+    top: 20px;
+}
+
+#big-text {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.chip {
+    width: 55px;
+    height: 40px;
+    border-radius: 6px;
+    /* background: gold; */
+    position: absolute;
+    top: 75px;
+    right: 125px;
+    /* ปรับหลบรูปภาพมาฝั่งขวา */
+}
+
+.info {
+    position: absolute;
+    top: 80px;
+    right: 35px;
+    /* ย้ายกล่องข้อความมาฝั่งขวา */
+    font-size: 14px;
+    line-height: 0.5;
+}
+
+/* .id-card {
+    position: absolute;
+    top: 145px;
+    left: 45px;
+    font-size: 17px;
+    letter-spacing: 2px;
+    z-index: 1;
+} */
+
+.f-square {
+    width: 40px;
+    height: 30px;
+    background: white;
+    position: absolute;
+    top: 165px;
+    left: 0;
+}
+
+.circle {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    position: absolute;
+}
+
+/* .f-blue {
+    background: rgba(135, 206, 235, 0.9);
+    position: absolute;
+    z-index: 0;
+    top: 160px;
+    left: 60px;
+} */
+
+.eng-name {
+    position: absolute;
+    bottom: 25px;
+    left: 45px;
+    font-size: 15px;
+    letter-spacing: 1.5px;
+}
+
+.my-picture {
+    width: 70px;
+    height: 90px;
+    position: absolute;
+    bottom: 75px;
+    left: 50px;
+    /* ย้ายรูปมาอยู่ฝั่งซ้าย */
+    background-image: url('mypic.jpg');
+    border: 2px solid white;
+    background-size: cover;
+}
+
+.master-card {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+}
+
+.red {
+    background: rgba(235, 0, 27, 0.8);
+    right: 30px;
+}
+
+.yellow {
+    background: rgba(247, 158, 27, 0.8);
+    right: 0px;
+}
+
+/* ด้านหลังของการ์ด */
+.back-card {
+    width: 400px;
+    height: 250px;
+    border-radius: 15px;
+    background: linear-gradient(to bottom, #003366 85%, white 15%);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.b-tab {
+    width: 100%;
+    height: 55px;
+    background: black;
+    position: absolute;
+    top: 30px;
+}
+
+/* .reference {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    line-height: 1.1;
+    position: absolute;
+    left: 10px;
+    bottom: 45px;
+} */
+
+.b-square {
+    width: 40px;
+    height: 30px;
+    background: white;
+    position: absolute;
+    top: 165px;
+    right: 0;
+}
+
+.b-blue {
+    background: skyblue;
+    position: absolute;
+    z-index: 0;
+    top: 155px;
+    right: 60px;
+}
+
+.barcode {
+    width: 35%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 5px;
+}
+
+.contact {
+    position: absolute;
+    top: 85px;
+    left: 45px;
+    /* ย้ายกล่องข้อความมาฝั่งขวา */
+    font-size: 14px;
+    line-height: 0.5;
+}

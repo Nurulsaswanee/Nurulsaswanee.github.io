@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Scientific Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn {
+            transition: all 0.1s ease-in-out;
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: scale(0.92);
+            filter: brightness(0.8);
+        }
+
+        .display-text {
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4 antialiased sm:bg-gray-200">
+    <div class="bg-[#1C1C1C] text-white w-full max-w-[340px] rounded-[2.5rem] shadow-2xl p-5 pb-8">
+        <!-- Calculator Display -->
+        <div class="flex flex-col items-end justify-end w-full h-32 mb-4 px-2">
+            <div id="previous-operand"
+                class="text-gray-400 text-sm min-h-[1.5rem] font-medium tracking-wider overflow-x-auto max-w-full whitespace-nowrap">
+            </div>
+            <div id="current-operand" class="display-text text-5xl font-light tracking-tight mt-1 min-h-[4rem]">0</div>
+        </div>
+
+        <!-- Keypad -->
+        <div class="grid grid-cols-4 gap-2.5">
+            <!-- Row 1: Sci Functions -->
+            <button
+                class="btn bg-[#333333] text-gray-200 text-base font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendFunction('sin(')">sin</button>
+            <button
+                class="btn bg-[#333333] text-gray-200 text-base font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendFunction('cos(')">cos</button>
+            <button
+                class="btn bg-[#333333] text-gray-200 text-base font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendFunction('tan(')">tan</button>
+            <button
+                class="btn bg-[#D4D4D2] text-black text-xl font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#E5E5E5]"
+                onclick="clearDisplay()">C</button>
+
+            <!-- Row 2: Sci Functions -->
+            <button
+                class="btn bg-[#333333] text-gray-200 text-base font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendFunction('log(')">log</button>
+            <button
+                class="btn bg-[#333333] text-gray-200 text-base font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendFunction('√(')">√</button>
+            <button
+                class="btn bg-[#333333] text-gray-200 text-base font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendOperator('^')">x^y</button>
+            <button
+                class="btn bg-[#FF9500] text-white text-base font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#FFB143]"
+                onclick="deleteNumber()">DEL</button>
+
+            <!-- Row 3: Brackets, Pi, Division -->
+            <button
+                class="btn bg-[#333333] text-gray-200 text-xl font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendNumber('(')">(</button>
+            <button
+                class="btn bg-[#333333] text-gray-200 text-xl font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendNumber(')')">)</button>
+            <button
+                class="btn bg-[#333333] text-gray-200 text-lg font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#444444]"
+                onclick="appendNumber('π')">π</button>
+            <button
+                class="btn bg-[#FF9500] text-white text-3xl font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#FFB143]"
+                onclick="appendOperator('÷')">÷</button>
+
+            <!-- Row 4 -->
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('7')">7</button>
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('8')">8</button>
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('9')">9</button>
+            <button
+                class="btn bg-[#FF9500] text-white text-3xl font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#FFB143]"
+                onclick="appendOperator('×')">×</button>
+
+            <!-- Row 5 -->
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('4')">4</button>
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('5')">5</button>
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('6')">6</button>
+            <button
+                class="btn bg-[#FF9500] text-white text-3xl font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#FFB143] pb-1"
+                onclick="appendOperator('-')">-</button>
+
+            <!-- Row 6 -->
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('1')">1</button>
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('2')">2</button>
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-center hover:bg-[#737373]"
+                onclick="appendNumber('3')">3</button>
+            <button
+                class="btn bg-[#FF9500] text-white text-3xl font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#FFB143] pb-1"
+                onclick="appendOperator('+')">+</button>
+
+            <!-- Row 7 -->
+            <button
+                class="btn col-span-2 bg-[#505050] text-white text-2xl font-normal rounded-full h-14 flex items-center justify-start pl-7 hover:bg-[#737373]"
+                onclick="appendNumber('0')">0</button>
+            <button
+                class="btn bg-[#505050] text-white text-2xl font-bold rounded-full h-14 flex items-center justify-center hover:bg-[#737373] pb-2"
+                onclick="appendNumber('.')">.</button>
+            <button
+                class="btn bg-[#FF9500] text-white text-3xl font-medium rounded-full h-14 flex items-center justify-center hover:bg-[#FFB143] pb-1"
+                onclick="compute()">=</button>
+        </div>
+    </div>
+
+    <!-- Footer ส่วนท้าย -->
+    <footer class="mt-6 text-center text-sm text-gray-500 leading-relaxed">
+        <p>Copyright 2026 &copy; by Nursiham wohma 6720310105</p>
+        <p>Copyright 2026 &copy; by Nurulsaswanee Denasan 6720310107</p>
+        <p>Copyright 2026 &copy; by Ahlam abdulmanae 6720310125</p>
+    </footer>
+
+    <script>
+        let currentOperand = '0';
+        let previousOperand = '';
+        let shouldResetScreen = false;
+
+        const currentDisplay = document.getElementById('current-operand');
+        const previousDisplay = document.getElementById('previous-operand');
+
+        function clearDisplay() {
+            currentOperand = '0';
+            previousOperand = '';
+            shouldResetScreen = false;
+            updateDisplay();
+        }
+
+        function deleteNumber() {
+            if (currentOperand === 'Error' || shouldResetScreen) {
+                clearDisplay();
+                return;
+            }
+            const funcs = ['sin(', 'cos(', 'tan(', 'log(', '√('];
+            for (let f of funcs) {
+                if (currentOperand.endsWith(f)) {
+                    currentOperand = currentOperand.slice(0, -f.length);
+                    if (currentOperand === '') currentOperand = '0';
+                    updateDisplay();
+                    return;
+                }
+            }
+            currentOperand = currentOperand.toString().slice(0, -1);
+            if (currentOperand === '' || currentOperand === '-') currentOperand = '0';
+            updateDisplay();
+        }
+
+        function appendNumber(number) {
+            if (shouldResetScreen) {
+                currentOperand = '';
+                shouldResetScreen = false;
+            }
+            if (currentOperand === '0' && number !== '.') {
+                currentOperand = number;
+            } else {
+                currentOperand = currentOperand.toString() + number.toString();
+            }
+            updateDisplay();
+        }
+
+        function appendFunction(func) {
+            if (shouldResetScreen) {
+                currentOperand = '';
+                shouldResetScreen = false;
+            }
+            if (currentOperand === '0') {
+                currentOperand = func;
+            } else {
+                currentOperand += func;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(op) {
+            if (currentOperand === 'Error') clearDisplay();
+            shouldResetScreen = false;
+            currentOperand += ' ' + op + ' ';
+            updateDisplay();
+        }
+
+        function compute() {
+            if (shouldResetScreen || currentOperand === 'Error') return;
+
+            try {
+                let expression = currentOperand
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/π/g, 'Math.PI')
+                    .replace(/\^/g, '**')
+                    .replace(/√\(/g, 'Math.sqrt(')
+                    .replace(/log\(/g, 'Math.log10(');
+
+                expression = expression
+                    .replace(/sin\(([^)]+)\)/g, 'Math.sin(($1) * Math.PI / 180)')
+                    .replace(/cos\(([^)]+)\)/g, 'Math.cos(($1) * Math.PI / 180)')
+                    .replace(/tan\(([^)]+)\)/g, 'Math.tan(($1) * Math.PI / 180)');
+
+                const openCount = (expression.match(/\(/g) || []).length; 
+                const closeCount = (expression.match(/\)/g) || []).length;
+
+                if (openCount > closeCount) {
+                    expression += ')'.repeat(openCount - closeCount);
+                }
+
+                previousOperand = currentOperand + ' =';
+                let result = Function(`"use strict"; return (${expression})`)();
+
+                if (isNaN(result) || !isFinite(result)) {
+                    currentOperand = 'Error';
+                } else {
+                    currentOperand = (Math.round(result * 100000000) / 100000000).toString();
+                }
+            } catch (err) {
+                currentOperand = 'Error';
+            }
+
+            shouldResetScreen = true;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            currentDisplay.innerText = currentOperand;
+            previousDisplay.innerText = previousOperand;
+
+            if (currentDisplay.innerText.length > 10) {
+                currentDisplay.classList.remove('text-5xl');
+                currentDisplay.classList.add('text-3xl');
+            } else {
+                currentDisplay.classList.remove('text-3xl');
+                currentDisplay.classList.add('text-5xl');
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') appendNumber(e.key);
+            if (e.key === '.') appendNumber('.');
+            if (e.key === '(' || e.key === ')') appendNumber(e.key);
+            if (e.key === '=' || e.key === 'Enter') {
+                e.preventDefault();
+                compute();
+            }
+            if (e.key === 'Backspace') deleteNumber();
+            if (e.key === 'Escape') clearDisplay();
+            if (e.key === '+') appendOperator('+');
+            if (e.key === '-') appendOperator('-');
+            if (e.key === '*') appendOperator('×');
+            if (e.key === '/') {
+                e.preventDefault();
+                appendOperator('÷');
+            }
+            if (e.key === '^') appendOperator('^');
+        });    
+    </script>
+</body>
+
+</html>

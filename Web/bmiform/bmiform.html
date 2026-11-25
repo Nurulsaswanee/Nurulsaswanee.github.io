@@ -1,0 +1,178 @@
+<!-- bmiform.html -->
+<!DOCTYPE html>
+<!-- html>head+body+footer -->
+<html>
+
+<head>
+    <title>BMI Calculator</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="bmi.png">
+    <!-- Google Fonts: Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+        function calgrade() {
+            let fnme = document.getElementById("fname").value;
+            let lnme = document.getElementById("lname").value;
+            if (fnme == "") {//if fname is empty
+                alert("Please input your first name");
+                document.getElementById("fname").focus(); //move cursor to id=fname
+                return;
+            }
+            document.getElementById("grt").innerHTML = "👋 Hello, " + fnme + " " + lnme;
+            let w = document.getElementById("wgt").value; //อ่านค่า weight จากฟอร์ม
+            let h = document.getElementById("hgt").value; //อ่านค่า height จากฟอร์ม
+            if (w == "") {
+                alert("Please fill in your weight in kg.");
+                document.getElementById("wgt").focus();
+                return;
+            }
+            let kg = parseFloat(w);
+            if (kg < 0 || kg > 300) {
+                alert("Incorrent weight จ้า กรอกใหม่");
+                document.getElementById("wgt").focus();
+                return;
+            }
+            if (h == "") {
+                alert("Please fill in your height in cm.");
+                document.getElementById("hgt").focus();
+                return;
+            }
+            let cm = parseFloat(h);
+            if (cm < 0 || cm > 300) {
+                alert("Incorrent height จ้า กรอกใหม่");
+                document.getElementById("hgt").focus();
+                return;
+            }
+
+            let hM = cm / 100;
+            let bmi = kg / (hM ** 2); //คำนวณหาค่าbmi
+            document.getElementById("bmi").innerHTML = "📊 BMI = " + bmi.toFixed(2);
+            let rst = 'NA';
+            let imgName = 'default.jpg';
+            if (bmi >= 25) {
+                rst = 'overweight';
+                imgName = 'overweight.jpg'
+            } else if (bmi >= 18.5) {
+                rst = 'normal';
+                imgName = 'normal.jpg'
+            } else {
+                rst = 'underweight';
+                imgName = 'underweight.jpg'
+            }
+            document.getElementById("rst").innerHTML = "💡 Result = " + rst;
+            document.getElementById("img_rs").src = imgName;
+        }
+        function checkError() {
+            let w = document.getElementById("wgt").value; //อ่านค่า weight จากฟอร์ม
+            let h = document.getElementById("hgt").value; //อ่านค่า height จากฟอร์ม
+            if (w == "") {
+                alert("Please fill in your weight in kg.");
+                document.getElementById("wgt").focus();
+                return;
+            }
+            if (w < 0 || w > 300) {
+                alert("Incorrent weight จ้า กรอกใหม่");
+                document.getElementById("wgt").focus();
+                return;
+            }
+            
+            if (h == "") {
+                alert("Please fill in your height in cm.");
+                document.getElementById("hgt").focus();
+                return;
+            }
+            if (h < 0 || h > 300) {
+                alert("Incorrent height จ้า กรอกใหม่");
+                document.getElementById("hgt").focus();
+                return;
+            }
+        }
+    </script>
+    <style>
+        body{
+            background: linear-gradient(135deg, #e0f2fe 0%, #fef3c7 100%);
+            font-family: 'Kanit', sans-serif;
+        }
+        .frm {
+            margin: 30px auto;
+            border-radius: 10px;
+            border: 1px solid darkblue;
+            padding: 20px;
+            background-color: aliceblue;
+            /* text-align: center; */
+            max-width: 700px;
+        }
+
+        .card-form {
+            margin: 20px;
+            border-radius: 10px;
+            border: 1px solid darkblue;
+            padding: 20px;
+            background-color: cornsilk;
+            box-shadow: 3px 3px 3px gray;
+        }
+
+        .card-rs {
+            margin: 20px;
+            border-radius: 10px;
+            border: 1px solid darkblue;
+            padding: 20px;
+            background-color: cornsilk;
+            box-shadow: 3px 3px 3px gray;
+            text-align: center;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;       
+            padding: 3px;     
+            box-sizing: border-box; 
+        }
+
+        footer {
+            text-align: center;
+            margin: 30px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="frm">
+        <center>
+            <h1>BMI Calculator 🏃💡</h1>
+        </center>
+        <form class="card-form">
+            <p>
+                <label for="fname">🏷️ First name*:</label><br>
+                <input type="text" id="fname" name="fname" placeholder="ระบุชื่อ" required>
+            </p>
+            <p>
+                <label for="lname">🏷️ Last name:</label><br>
+                <input type="text" id="lname" name="lname" placeholder="ระบุสกุล">
+            </p>
+            <p>
+                <label for="wgt">⚖️ Weight (kg)*:</label><br>
+                <input type="number" id="wgt" name="wgt" placeholder="ระบุน้ำหนักเป็น kg"
+                    required>
+            </p>
+            <p>
+                <label for="hgt">📏 Height (cm)*:</label><br>
+                <input type="number" id="hgt" name="hgt" placeholder="ระบุส่วนสูงเป็น cm"
+                    required>
+            </p>
+            <center><p><button type="button" onclick="calgrade()">⚡ Calculate</button>
+                <button type="reset">🔄 Clear</button>
+            </p></center>
+        </form>
+        <div class="card-rs">
+            <p id="grt">👋 Greeting will be hear.</p>
+            <p id="bmi">📊 BMI will be hear.</p>
+            <p id="rst">💡 Result (Normal/Overweight/Underweight) will be hear.</p>
+            <img src="default.jpg" alt="BMI Result Image" id="img_rs" width="50%">
+        </div>
+    </div>
+</body>
+<footer>Copyright &copy; 2026 by Nurulsaswanee Denasan 6720310107</footer>
+
+</html>

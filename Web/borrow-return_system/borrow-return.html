@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <title>Borrow-Return System</title>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/x-icon" href="borrow.png">
+    <style>
+        body {
+            font-family: 'Prompt', 'Segoe UI', Tahoma, sans-serif;
+            background: #ffffff;
+            color: #2b2b2b;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f0f0f0;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        h1 {
+            color: #ff7675;
+            font-size: 26px;
+            margin-bottom: 6px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #b2bec3;
+            font-size: 13px;
+            margin-bottom: 25px;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+            color: #636e72;
+            font-size: 13px;
+        }
+
+        .desc {
+            font-size: 11px;
+            color: #b2bec3;
+            margin-bottom: 6px;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #dfe6e9;
+            border-radius: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background-color: #fdfdfd;
+            color: #2d3436;
+            transition: all 0.2s ease;
+        }
+
+        input[type="date"]:focus {
+            border-color: #ff7675;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 118, 117, 0.1);
+            background-color: #fff;
+        }
+
+        input[readonly] {
+            background-color: #f8f9fa;
+            border-color: #f1f2f6;
+            color: #b2bec3;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 25px;
+            margin-top: 8px;
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #f1f2f6;
+        }
+
+        .radio-group label {
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #636e72;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button[type="button"] {
+            background-color: #ff7675;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 118, 117, 0.3);
+        }
+
+        button[type="reset"] {
+            background-color: #f1f2f6;
+            color: #636e72;
+            border: 1px solid #dfe6e9;
+        }
+
+        .result-box {
+            margin-top: 22px;
+            padding: 16px;
+            background: #fff5f5;
+            border-left: 4px solid #ff7675;
+            border-radius: 0 10px 10px 0;
+            font-size: 14px;
+        }
+
+        .result-box b {
+            color: #d63031;
+        }
+
+        #rs {
+            display: block;
+            margin-top: 6px;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 12px;
+            color: #b2bec3;
+            line-height: 1.4;
+        }
+    </style>
+    <script>
+        function cal2show() {
+            let m_type = document.querySelector('input[name="m_type"]:checked').value;
+            let b_date = document.getElementById("borrowDate").value; 
+            if (b_date == "") {
+                alert("Please select Borrow Date."); return;
+            }
+            let r_date = document.getElementById("returnDate").value; 
+            if (r_date == "") {
+                alert("Please select Return Date."); return;
+            }
+            
+            let b_time = new Date(b_date).getTime();
+            let r_time = new Date(r_date).getTime();
+
+            if (r_time < b_time) {
+                alert("Return Date cannot be earlier than Borrow Date."); return;
+            }
+
+            let d_date = new Date(b_date);
+            let allowDays = (m_type === "Staff") ? 30 : 15;
+            d_date.setDate(d_date.getDate() + allowDays);
+            let d_time = d_date.getTime();
+
+            let rs = "";
+            let diff = r_time - d_time;
+            let overdueDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+            if (overdueDays <= 0) {
+                rs = "(1) คืนสำเร็จ (ไม่มีค่าปรับ)";
+            } else {
+                let fine = overdueDays * 5;
+                rs = "(2) คืนเกินกำหนด มีค่าปรับเป็นจำนวน " + fine + " บาท (เกิน " + overdueDays + " วัน)";
+            }
+
+            document.getElementById("rs").innerHTML = rs;
+        }
+
+        function updateDueDate() {
+            let b_date = document.getElementById("borrowDate").value;
+            if (b_date == "") return;
+
+            let m_type = document.querySelector('input[name="m_type"]:checked').value;
+            let allowDays = (m_type === "Staff") ? 30 : 15;
+
+            let d_date = new Date(b_date);
+            d_date.setDate(d_date.getDate() + allowDays);
+
+            let yyyy = d_date.getFullYear();
+            let m = d_date.getMonth() + 1;
+            let d = d_date.getDate();
+            let mm = (m < 10) ? "0" + m : m;
+            let dd = (d < 10) ? "0" + d : d;
+
+            document.getElementById("dueDate").value = yyyy + "-" + mm + "-" + dd;
+        }
+
+        function setDefault() {
+            let curdate = new Date();  
+            let yyyy = curdate.getFullYear();
+            let m = curdate.getMonth() + 1; 
+            let d = curdate.getDate(); 
+            let mm = (m < 10) ? "0" + m : m;
+            let dd = (d < 10) ? "0" + d : d;
+            let current_date = yyyy + "-" + mm + "-" + dd; 
+
+            document.getElementById("borrowDate").value = current_date;
+            updateDueDate();
+            document.getElementById("rs").innerHTML = "-";
+        }
+    </script>
+</head>
+
+<body onload="setDefault()">
+    <div class="container">
+        <h1>Borrow-Return System</h1>
+        <div class="subtitle">ระบบยืม-คืนหนังสือและคำนวณค่าปรับอัตโนมัติ</div>
+        
+        <div class="form-group">
+            <label>ระบุประเภทสมาชิก:</label>
+            <div class="radio-group">
+                <label><input type="radio" id="staff" name="m_type" value="Staff" checked onclick="updateDueDate()"> Staff (30 วัน)</label>
+                <label><input type="radio" id="student" name="m_type" value="Student" onclick="updateDueDate()"> Student (15 วัน)</label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="borrowDate">Borrow Date:</label>
+            <div class="desc">(วันที่ยืม กำหนดเริ่มต้นเป็นวันปัจจุบัน สามารถเลือกใหม่หรือเปลี่ยนแปลงได้)</div>
+            <input type="date" id="borrowDate" name="borrowDate" onchange="updateDueDate()">
+        </div>
+        
+        <div class="form-group">
+            <label for="dueDate">Due Date:</label>
+            <div class="desc">(วันกำหนดคืน คำนวณค่าได้ตามประเภทสมาชิก: นศ 15 วัน, บุคลากร 30 วัน)</div>
+            <input type="date" id="dueDate" name="dueDate" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="returnDate">Return Date:</label>
+            <div class="desc">(ให้ผู้ใช้เลือกวันที่คืนจริง)</div>
+            <input type="date" id="returnDate" name="returnDate">
+        </div>
+        
+        <div class="btn-container">
+            <button type="button" onclick="cal2show()">Submit</button>
+            <button type="reset" onclick="setTimeout(setDefault, 10)">Reset</button>
+        </div>
+
+        <div class="result-box">
+            <b>ผลลัพธ์เมื่อคลิกปุ่ม Submit:</b>
+            <span id="rs">-</span>
+        </div>
+    </div>
+
+    <footer>
+        <p>Copyright 2026 &copy; by Nurulsaswanee Denasan <br> 6720310107</p>
+    </footer>
+</body>
+
+</html>

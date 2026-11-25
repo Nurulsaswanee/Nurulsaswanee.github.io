@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My Web</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Kanit">
+    <link rel="icon" type="image/x-icon" href="iconseries.jpg">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            /* color: red */
+        }
+
+        body {
+            font-family: Kanit;
+            color: #aaaaaa;
+            background-color: #f4f6f9;
+            color: #000000;
+            /* line-height: 1.6; */
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e1e2f 0%, #2a2a40 100%);
+            padding: 15px;
+            text-align: center;
+            color: #E50914;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .menu {
+            float: left;
+            width: 20%;
+            text-align: center;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+
+        .menu h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #1e1e2f;
+            border-bottom: 2px solid #ff4757;
+            padding-bottom: 5px;
+        }
+
+        .menu a {
+            background-color: #f8f9fa;
+            padding: 8px;
+            margin-top: 8px;
+            display: block;
+            width: 100%;
+            color: #495057;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .main {
+            float: left;
+            width: 60%;
+            padding: 0 20px;
+            color: black;
+            margin-top: 20px;
+        }
+
+        .section {
+            background-color: #ffffff;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        } 
+
+        .video-container {
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .right {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center;
+            float: left;
+            width: 20%;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        .right h2 {
+            font-size: 1.2rem;
+            color: #1e1e2f;
+            margin-bottom: 10px;
+        }
+
+        .right p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        footer {
+            background-color: #1e1e2f ;
+            color: #aaaaaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        @media only screen and (max-width: 620px) {
+
+            /* For mobile phones: */
+            .menu,
+            .main,
+            .right {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>🎬 Series Center 📽️</h1>
+    </div>
+
+    <div style="overflow:auto">
+        <div class="menu">
+            <h3>หมวดหมู่ซีรีย์</h3>
+            <a href="#sec1">K-Drama</a>
+            <a href="#sec2">C-Drama</a>
+            <a href="#sec3">T-Drama</a>
+            <a href="#sec4">🎥 ตัวอย่างซีรีส์</a>
+            <a href="myweb.html">🏠 Top</a>
+            <a href="https://www.netflix.com/th/" target="_blank">🌐 NETFLIX</a>
+        </div>
+
+
+        <div class="main">
+            <section id="sec1" class="section">
+                <h2>ซีรีส์เกาหลี (K-Drama)</h2>
+                <p>ซีรีส์เกาหลีโดดเด่นด้วยบทละครที่เข้มข้น การดำเนินเรื่องที่น่าติดตาม และโปรดักชันระดับคุณภาพ 
+                    มีหลากหลายแนวให้เลือกชม ไม่ว่าจะเป็นแนวโรแมนติกคอมเมดี้ สืบสวนสอบสวน แฟนตาซี 
+                    หรือย้อนยุค (ซากึก) เรื่องยอดนิยมตลอดกาล ได้แก่ Crash Landing on You, Vincenzo, 
+                    และ Itaewon Class</p>
+            </section>
+            <section id="sec2" class="section">
+                <h2>ซีรีส์จีน (C-Drama)</h2>
+                <p>ซีรีส์จีนได้รับความนิยมอย่างมาก โดยเฉพาะแนวเทพเซียน ย้อนยุคกำลังภายใน และแนวรักวัยรุ่นในรั้วมหาวิทยาลัย 
+                    โดดเด่นด้วยเสื้อผ้าเครื่องแต่งกายที่อลังการและฉากเอฟเฟกต์สุดตระการตา เรื่องที่ได้รับความนิยม เช่น 
+                    ปรมาจารย์ลัทธิมาร (The Untamed) และ เทียบท้าปฐพี (Who Rules The World)</p>
+            </section>
+            <section id="sec3" class="section">
+                <h2>ซีรีส์ไทย (T-Drama)</h2>
+                <p>ซีรีส์ไทยมีการเติบโตและพัฒนาอย่างก้าวกระโดดในช่วงไม่กี่ปีที่ผ่านมา โดยได้รับความนิยมอย่างสูงทั้งในประเทศ
+                    และต่างประเทศ โดดเด่นด้วยเนื้อหาหลากหลายรสชาติ ตั้งแต่แนวโรแมนติกคอมเมดี้ ดราม่าเข้มข้น 
+                    ไปจนถึงซีรีส์แนว Y (Boy's Love) และ GL (Girls' Love) ที่สร้างปรากฏการณ์ระดับโลก</p>
+            </section>
+            <section id="sec4">
+                <h2>🎥 ตัวอย่างซีรีส์ (Trailer)</h2>
+                <div class="video-container">
+                <iframe width="750" height="415" src="https://www.youtube.com/embed/_bvtQmdweJ4?autoplay=1&mute=1">
+                </iframe>
+                <iframe width="750" height="415" src="https://www.youtube.com/embed/TcKP5a6pNdg?autoplay=1&mute=1">
+                </iframe>
+                <iframe width="750" height="415" src="https://www.youtube.com/embed/QbU4B3r2uvA?autoplay=1&mute=1">
+                </iframe>
+                </div>
+
+            </section>
+        </div>
+
+        <div class="right">
+            <h2>About</h2>
+            <p>เว็บไซต์นี้จัดทำขึ้นเพื่อรวบรวมรีวิวและแนะนำซีรีส์น่าดูสำหรับผู้ที่ชื่นชอบการดูซีรีส์ในเวลาว่าง</p>
+        </div>
+    </div>
+
+    <footer>
+        <div>copyright © 2026 by Nurulsaswanee Denasan</div>
+    </footer>
+
+</body>
+
+</html>
